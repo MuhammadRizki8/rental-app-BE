@@ -11,6 +11,9 @@ class User(Base):
     create_at = Column(DateTime, default=datetime.now)
     update_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    photos = relationship("Photo", back_populates="author")
+    wallets = relationship("Wallet", back_populates="user")
+
 class Photo(Base):
     __tablename__ = "photo"
     id_photo = Column(Integer, primary_key=True, index=True)
@@ -20,7 +23,8 @@ class Photo(Base):
     price = Column(DECIMAL(10, 2))
     create_at = Column(DateTime, nullable=False, default=datetime.now)
     update_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
-    
+
+    author = relationship("User", back_populates="photos")
 
 class Wallet(Base):
     __tablename__ = "wallet"
@@ -29,3 +33,5 @@ class Wallet(Base):
     balance = Column(DECIMAL(10, 2), nullable=False)
     create_at = Column(DateTime, nullable=False, default=datetime.now)
     update_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
+    user = relationship("User", back_populates="wallets")

@@ -41,6 +41,7 @@ def create_initial_wallet(db: Session, user_id: int):
     db.refresh(new_wallet)
     return new_wallet
 
+
 @auth_router.post("/register/", response_model=dict)
 async def register(user: UserAuth, db: Session = Depends(get_db)):
     hashed_password = pwd_context.hash(user.password)

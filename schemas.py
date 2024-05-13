@@ -14,7 +14,7 @@ class User(UserBase):
     update_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class Token(BaseModel):
     access_token: str
@@ -44,6 +44,9 @@ class Photo(PhotoBase):
     create_at: datetime
     update_at: datetime
     
+    class Config:
+        from_attributes = True
+    
 # -------------------------------------------------------
 class WalletBase(BaseModel):
     id_user: int
@@ -59,3 +62,6 @@ class Wallet(WalletBase):
     id_wallet: int
     create_at: Optional[str]
     update_at: Optional[str]
+    
+    class Config:
+        from_attributes = True
