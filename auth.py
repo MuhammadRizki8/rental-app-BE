@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import models
 from database import SessionLocal
 from schemas import UserAuth
+from decimal import Decimal
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -31,6 +32,15 @@ def get_db():
     finally:
         db.close()
 
+# Fungsi untuk membuat wallet baru saat membuat user baru
+def create_initial_wallet(db: Session, user_id: int):
+    initial_balance = Decimal('30.00')  # Saldo awal 30
+    new_wallet = models.Wallet(balance=initial_balance, id_user=user_id)
+    db.add(new_wallet)
+    db.commit()
+    db.refresh(new_wallet)
+    return new_wallet
+
 @auth_router.post("/register/", response_model=dict)
 async def register(user: UserAuth, db: Session = Depends(get_db)):
     hashed_password = pwd_context.hash(user.password)
@@ -41,7 +51,12 @@ async def register(user: UserAuth, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    # Membuat wallet baru untuk user yang terdaftar
+    create_initial_wallet(db, new_user.id)
+
     return {"message": "User registered successfully", "data": {"id": new_user.id, "username": new_user.username}, "error": False}
+
 
 @auth_router.post("/login/", response_model=dict)
 async def login(user: UserAuth, db: Session = Depends(get_db)):

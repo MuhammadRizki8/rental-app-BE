@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from datetime import datetime
-import models, schemas
+from typing import List
+import models
+import schemas
 from database import SessionLocal
 from auth import get_current_user
-from typing import List
+from pydantic import BaseModel
 
 photo_router = APIRouter(prefix="/photos", tags=["photos"])
 
@@ -15,10 +17,16 @@ def get_db():
     finally:
         db.close()
 
-@photo_router.get("/", response_model=List[schemas.Photo])
+
+@photo_router.get("/")
 async def read_all_photos(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     photos = db.query(models.Photo).all()
-    return photos
+    response_data = {
+        "message": "Photos retrieved successfully",
+        "data": photos,
+        "error": False
+    }
+    return response_data
 
 @photo_router.post("/", response_model=dict)
 async def create_photo(photo: schemas.PhotoCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
@@ -34,7 +42,6 @@ async def create_photo(photo: schemas.PhotoCreate, db: Session = Depends(get_db)
         "data": {
             "id": db_photo.id_photo,
             "title": db_photo.title
-            # Include other fields if needed
         },
         "error": False
     }
@@ -45,7 +52,12 @@ async def read_photo(photo_id: int, db: Session = Depends(get_db), current_user:
     db_photo = db.query(models.Photo).filter(models.Photo.id_photo == photo_id).first()
     if db_photo is None:
         raise HTTPException(status_code=404, detail="Photo not found")
-    return db_photo
+    response_data = {
+        "message": "Photo retrieved successfully",
+        "data": {"id_photo":db_photo.id_photo, "id_author":db_photo.id_author, "title":db_photo.title, "description":db_photo.description, "price":db_photo.price, "create_at":db_photo.create_at, "update_at":db_photo.update_at},
+        "error": False
+    }
+    return response_data
 
 @photo_router.put("/{photo_id}", response_model=dict)
 async def update_photo(photo_id: int, photo: schemas.PhotoUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
@@ -55,13 +67,13 @@ async def update_photo(photo_id: int, photo: schemas.PhotoUpdate, db: Session = 
     if db_photo.id_author != current_user.id:
         raise HTTPException(status_code=403, detail="You are not allowed to update this photo")
     for var, value in vars(photo).items():
-        setattr(db_photo, var, value)  # Update the attributes with the new values
+        setattr(db_photo, var, value)
     db_photo.update_at = datetime.now()
     db.commit()
     db.refresh(db_photo)
     response_data = {
         "message": "Photo updated successfully",
-        "data": db_photo,
+        "data": {"id_photo":db_photo.id_photo, "title":db_photo.title, "description":db_photo.description, "price":db_photo.price},
         "error": False
     }
     return response_data
@@ -77,7 +89,7 @@ async def delete_photo(photo_id: int, db: Session = Depends(get_db), current_use
     db.commit()
     response_data = {
         "message": "Photo deleted successfully",
-        "data": db_photo,
+        "data": {"id_photo":db_photo.id_photo},
         "error": False
     }
     return response_data

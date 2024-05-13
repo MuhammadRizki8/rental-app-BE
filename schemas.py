@@ -21,8 +21,9 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    username: Optional[str] = None
+    username: Optional[str] = None 
     
+# ----------------------------------------------------------   
     
 class PhotoBase(BaseModel):
     title: str
@@ -40,7 +41,21 @@ class PhotoUpdate(PhotoBase):
 
 class Photo(PhotoBase):
     id_photo: int
-    id_author: int
+    create_at: datetime
+    update_at: datetime
+    
+# -------------------------------------------------------
+class WalletBase(BaseModel):
+    id_user: int
+    balance: float
 
-    class Config:
-        orm_mode = True
+class WalletCreate(WalletBase):
+    pass
+
+class WalletUpdate(WalletBase):
+    pass
+
+class Wallet(WalletBase):
+    id_wallet: int
+    create_at: Optional[str]
+    update_at: Optional[str]
