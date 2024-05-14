@@ -47,17 +47,17 @@ class Photo(PhotoBase):
     update_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PhotoDetail(PhotoBase):
     id_photo: int
     id_author: int
     create_at: datetime
     update_at: datetime
-    file_path: Optional[str] = None  # Tambahkan field ini
+    file_path: Optional[str] = None  
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # -------------------------------------------------------
 class WalletBase(BaseModel):
@@ -76,7 +76,7 @@ class Wallet(WalletBase):
     update_at: Optional[str]
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # ------------------------------------------------------
 class PurchaseCreate(BaseModel):
@@ -90,7 +90,7 @@ class Purchase(BaseModel):
     create_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         json_encoders = {
             datetime: lambda v: v.isoformat()
         }
@@ -104,7 +104,7 @@ class PurchaseDetail(BaseModel):
     photo: PhotoDetail
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         json_encoders = {
             datetime: lambda v: v.isoformat()
         }

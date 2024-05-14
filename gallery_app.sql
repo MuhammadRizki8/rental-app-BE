@@ -75,8 +75,8 @@ INSERT INTO `purchase` (`id_purchase`, `id_user`, `id_photo`, `amount`, `create_
 
 CREATE TABLE `token` (
   `user_id` int(11) DEFAULT NULL,
-  `access_toke` varchar(450) NOT NULL,
-  `refresh_toke` varchar(450) NOT NULL,
+  `access_token` varchar(450) NOT NULL,
+  `refresh_token` varchar(450) NOT NULL,
   `status` tinyint(1) DEFAULT NULL,
   `created_date` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -85,7 +85,7 @@ CREATE TABLE `token` (
 -- Dumping data untuk tabel `token`
 --
 
-INSERT INTO `token` (`user_id`, `access_toke`, `refresh_toke`, `status`, `created_date`) VALUES
+INSERT INTO `token` (`user_id`, `access_token`, `refresh_token`, `status`, `created_date`) VALUES
 (52, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTU2NzQ5ODksInN1YiI6IjUyIn0.K5-7eUdUVYDN-uDJXFZLsh3PjgES_VvjfxFs_kmK-t4', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTYyNzc5ODksInN1YiI6IjUyIn0.9WnaleZ0zjgfEM29WjtSIecA1zWEGUvPySAmG9H8zMs', 0, '2024-05-14 14:53:09'),
 (53, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTU2NzUyNzYsInN1YiI6IjUzIn0.Ajh2T2HzBAIYhahsD69yl_-dB6nrQywhNZ0A_WUrCxs', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTYyNzgyNzYsInN1YiI6IjUzIn0.emDc2OCIv6OhvE4mrimw26-G6MYFDUppvyF_Z9bTx1E', 1, '2024-05-14 14:57:56');
 
@@ -156,7 +156,7 @@ ALTER TABLE `purchase`
 -- Indeks untuk tabel `token`
 --
 ALTER TABLE `token`
-  ADD PRIMARY KEY (`access_toke`);
+  ADD PRIMARY KEY (`access_token`);
 
 --
 -- Indeks untuk tabel `user`

@@ -1,17 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-import models, schemas, database, auth
+import models, schemas
 from decimal import Decimal
 from dependencies import get_current_user
+from database import get_db
 
 wallet_router = APIRouter(prefix="/wallets", tags=["wallets"])
 
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+
 
 @wallet_router.post("/")
 async def create_wallet(wallet: schemas.WalletCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):

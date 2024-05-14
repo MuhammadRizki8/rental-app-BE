@@ -15,14 +15,17 @@ class User(BaseDB):
     photos = relationship("Photo", back_populates="author")
     wallets = relationship("Wallet", back_populates="user")
     purchases = relationship("Purchase", back_populates="user")
+    tokens = relationship("TokenTable", back_populates="user")
 
 class TokenTable(BaseDB):
     __tablename__ = "token"
-    user_id = Column(Integer)
-    access_toke = Column(String(450), primary_key=True)
-    refresh_toke = Column(String(450), nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    access_token = Column(String(450), primary_key=True)
+    refresh_token = Column(String(450), nullable=False)
     status = Column(Boolean)
     created_date = Column(DateTime, default=datetime.now)
+
+    user = relationship("User", back_populates="tokens")
 
 class Photo(BaseDB):
     __tablename__ = "photo"

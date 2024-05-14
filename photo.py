@@ -1,22 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form
 from sqlalchemy.orm import Session
 from datetime import datetime
-from typing import List
 import models
 import schemas
-from database import SessionLocal
+from database import get_db
 from dependencies import *
 from fastapi.responses import FileResponse
 import os
 
 photo_router = APIRouter(prefix="/photos", tags=["photos"])
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @photo_router.get("/", dependencies=[Depends(JWTBearer())])
 async def read_all_photos(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
