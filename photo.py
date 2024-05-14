@@ -1,12 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
 from typing import List
 import models
 import schemas
 from database import SessionLocal
-from auth import get_current_user
-from pydantic import BaseModel
+from dependencies import *
 
 photo_router = APIRouter(prefix="/photos", tags=["photos"])
 
@@ -17,8 +16,7 @@ def get_db():
     finally:
         db.close()
 
-
-@photo_router.get("/")
+@photo_router.get("/", dependencies=[Depends(JWTBearer())])
 async def read_all_photos(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     photos = db.query(models.Photo).all()
     response_data = {
@@ -28,7 +26,7 @@ async def read_all_photos(db: Session = Depends(get_db), current_user: models.Us
     }
     return response_data
 
-@photo_router.post("/", response_model=dict)
+@photo_router.post("/", response_model=dict, dependencies=[Depends(JWTBearer())])
 async def create_photo(photo: schemas.PhotoCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     existing_photo = db.query(models.Photo).filter(models.Photo.title == photo.title).first()
     if existing_photo:
@@ -47,7 +45,7 @@ async def create_photo(photo: schemas.PhotoCreate, db: Session = Depends(get_db)
     }
     return response_data
 
-@photo_router.get("/{photo_id}", response_model=dict)
+@photo_router.get("/{photo_id}", response_model=dict, dependencies=[Depends(JWTBearer())])
 async def read_photo(photo_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     db_photo = db.query(models.Photo).filter(models.Photo.id_photo == photo_id).first()
     if db_photo is None:
@@ -59,7 +57,7 @@ async def read_photo(photo_id: int, db: Session = Depends(get_db), current_user:
     }
     return response_data
 
-@photo_router.put("/{photo_id}", response_model=dict)
+@photo_router.put("/{photo_id}", response_model=dict, dependencies=[Depends(JWTBearer())])
 async def update_photo(photo_id: int, photo: schemas.PhotoUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     db_photo = db.query(models.Photo).filter(models.Photo.id_photo == photo_id).first()
     if db_photo is None:
@@ -78,7 +76,7 @@ async def update_photo(photo_id: int, photo: schemas.PhotoUpdate, db: Session = 
     }
     return response_data
 
-@photo_router.delete("/{photo_id}", response_model=dict)
+@photo_router.delete("/{photo_id}", response_model=dict, dependencies=[Depends(JWTBearer())])
 async def delete_photo(photo_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     db_photo = db.query(models.Photo).filter(models.Photo.id_photo == photo_id).first()
     if db_photo is None:

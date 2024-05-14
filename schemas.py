@@ -2,27 +2,25 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 
-class UserBase(BaseModel):
+class UserCreate(BaseModel):
     username: str
-
-class UserAuth(UserBase):
     password: str
 
-class User(UserBase):
-    id: int
-    create_at: datetime
-    update_at: datetime
+class requestdetails(BaseModel):
+    username:str
+    password:str
 
-    class Config:
-        from_attributes = True
+class changepassword(BaseModel):
+    username:str
+    old_password:str
+    new_password:str
 
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-class TokenData(BaseModel):
-    username: Optional[str] = None 
-    
+class TokenCreate(BaseModel):
+    user_id:str
+    access_token:str
+    refresh_token:str
+    status:bool
+    created_date:datetime
 # ----------------------------------------------------------   
     
 class PhotoBase(BaseModel):

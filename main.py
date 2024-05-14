@@ -1,10 +1,11 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-import models
+from database import *
 from database import engine
-from auth import auth_router, get_current_user
+from auth import auth_router
 from photo import photo_router
 from wallet import wallet_router
+from dependencies import get_current_user
 
 app = FastAPI()
 
@@ -17,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-models.Base.metadata.create_all(bind=engine)
+BaseDB.metadata.create_all(bind=engine)
 
 app.include_router(auth_router)
 app.include_router(photo_router, dependencies=[Depends(get_current_user)])

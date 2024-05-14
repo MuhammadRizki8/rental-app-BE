@@ -1,20 +1,28 @@
-from sqlalchemy import Column, Integer, String, Text, DECIMAL, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DECIMAL, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from database import Base
+from database import BaseDB
 from datetime import datetime
 
-class User(Base):
+class User(BaseDB):
     __tablename__ = "user"
     id = Column(Integer, primary_key=True)
     username = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
+    password = Column(String)
     create_at = Column(DateTime, default=datetime.now)
     update_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
     photos = relationship("Photo", back_populates="author")
     wallets = relationship("Wallet", back_populates="user")
 
-class Photo(Base):
+class TokenTable(BaseDB):
+    __tablename__ = "token"
+    user_id = Column(Integer)
+    access_toke = Column(String(450), primary_key=True)
+    refresh_toke = Column(String(450),nullable=False)
+    status = Column(Boolean)
+    created_date = Column(DateTime, default=datetime.now)
+
+class Photo(BaseDB):
     __tablename__ = "photo"
     id_photo = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), index=True, unique=True)
@@ -26,7 +34,7 @@ class Photo(Base):
 
     author = relationship("User", back_populates="photos")
 
-class Wallet(Base):
+class Wallet(BaseDB):
     __tablename__ = "wallet"
     id_wallet = Column(Integer, primary_key=True)
     id_user = Column(Integer, ForeignKey("user.id"))
