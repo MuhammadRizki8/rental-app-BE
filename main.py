@@ -5,6 +5,7 @@ from database import engine
 from auth import auth_router
 from photo import photo_router
 from wallet import wallet_router
+from purchase import purchase_router
 from dependencies import get_current_user
 
 app = FastAPI()
@@ -23,6 +24,7 @@ BaseDB.metadata.create_all(bind=engine)
 app.include_router(auth_router)
 app.include_router(photo_router, dependencies=[Depends(get_current_user)])
 app.include_router(wallet_router, dependencies=[Depends(get_current_user)])
+app.include_router(purchase_router, dependencies=[Depends(get_current_user)])
 
 @app.get("/")
 async def root():
