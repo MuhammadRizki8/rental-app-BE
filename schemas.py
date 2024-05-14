@@ -1,3 +1,4 @@
+# schemas.py
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
@@ -27,14 +28,18 @@ class TokenCreate(BaseModel):
 
 class PhotoBase(BaseModel):
     title: str
-    description: Optional[str] = None
+    description: str
     price: float
 
-class PhotoCreate(PhotoBase):
-    pass
+class PhotoCreate(BaseModel):
+    title: str
+    description: str
+    price: Optional[float] = None
 
-class PhotoUpdate(PhotoBase):
-    pass
+class PhotoUpdate(BaseModel):
+    title: str
+    description: str
+    price: Optional[float] = None
 
 class Photo(PhotoBase):
     id_photo: int
@@ -49,6 +54,7 @@ class PhotoDetail(PhotoBase):
     id_author: int
     create_at: datetime
     update_at: datetime
+    file_path: Optional[str] = None  # Tambahkan field ini
     
     class Config:
         orm_mode = True
