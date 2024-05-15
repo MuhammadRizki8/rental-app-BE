@@ -36,7 +36,7 @@ class Photo(BaseDB):
     price = Column(DECIMAL(10, 2))
     create_at = Column(DateTime, nullable=False, default=datetime.now)
     update_at = Column(DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
-    file_path = Column(String(255), nullable=True)  # Tambahkan kolom ini
+    path = Column(String(255), nullable=True)  # Tambahkan kolom ini
 
     author = relationship("User", back_populates="photos")
     purchases = relationship("Purchase", back_populates="photo")

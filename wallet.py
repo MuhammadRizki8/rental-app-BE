@@ -7,6 +7,16 @@ from database import get_db
 
 wallet_router = APIRouter(prefix="/wallets", tags=["wallets"])
 
+@wallet_router.get("/{wallet_id}")
+async def get_wallet_by_id(wallet_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    db_wallet = get_wallet(db, wallet_id)
+    if db_wallet is None:
+        raise HTTPException(status_code=404, detail="Wallet not found")
+    
+    if db_wallet.id_user != current_user.id:
+        raise HTTPException(status_code=403, detail="You are not allowed to access this wallet")
+
+    return {"message": "Wallet fetched successfully", "data": {"id_wallet": db_wallet.id_wallet, "balance": db_wallet.balance}, "error": False}
 
 
 @wallet_router.post("/")
@@ -58,14 +68,6 @@ async def delete_wallet(wallet_id: int, db: Session = Depends(get_db), current_u
 
 def get_wallet(db: Session, wallet_id: int):
     return db.query(models.Wallet).filter(models.Wallet.id_wallet == wallet_id).first()
-
-def update_wallet(db: Session, wallet_id: int, wallet: schemas.WalletUpdate):
-    db_wallet = db.query(models.Wallet).filter(models.Wallet.id_wallet == wallet_id).first()
-    if db_wallet:
-        db_wallet.balance = wallet.balance
-        db.commit()
-        db.refresh(db_wallet)
-    return db_wallet
 
 def delete_wallet(db: Session, wallet_id: int):
     db_wallet = db.query(models.Wallet).filter(models.Wallet.id_wallet == wallet_id).first()

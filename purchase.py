@@ -69,7 +69,7 @@ async def get_purchases_by_user(user_id: int, db: Session = Depends(get_db), cur
                 id_author=photo.id_author,
                 create_at=photo.create_at,
                 update_at=photo.update_at,
-                file_path=photo.file_path
+                path=photo.path
             )
         )
         purchases_with_details.append(purchase_with_detail)

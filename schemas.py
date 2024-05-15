@@ -54,7 +54,7 @@ class PhotoDetail(PhotoBase):
     id_author: int
     create_at: datetime
     update_at: datetime
-    file_path: Optional[str] = None  
+    path: Optional[str] = None  
     
     class Config:
         from_attributes = True

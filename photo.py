@@ -11,7 +11,7 @@ import os
 photo_router = APIRouter(prefix="/photos", tags=["photos"])
 
 @photo_router.get("/", dependencies=[Depends(JWTBearer())])
-async def read_all_photos(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+async def read_all_photos(db: Session = Depends(get_db)):
     photos = db.query(models.Photo).all()
     response_data = {
         "message": "Photos retrieved successfully",
@@ -51,7 +51,7 @@ async def create_photo(
         id_author=current_user.id,
         create_at=datetime.now(),
         update_at=datetime.now(),
-        file_path=file.filename
+        path=file.filename
     )
     db.add(db_photo)
     db.commit()
@@ -62,20 +62,20 @@ async def create_photo(
         "data": {
             "id": db_photo.id_photo,
             "title": db_photo.title,
-            "file_path": db_photo.file_path
+            "path": db_photo.path
         },
         "error": False
     }
     return response_data
 
 @photo_router.get("/{photo_id}", response_model=dict, dependencies=[Depends(JWTBearer())])
-async def read_photo(photo_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+async def read_photo(photo_id: int, db: Session = Depends(get_db)):
     db_photo = db.query(models.Photo).filter(models.Photo.id_photo == photo_id).first()
     if db_photo is None:
         raise HTTPException(status_code=404, detail="Photo not found")
     response_data = {
         "message": "Photo retrieved successfully",
-        "data": {"id_photo": db_photo.id_photo, "id_author": db_photo.id_author, "title": db_photo.title, "description": db_photo.description, "price": db_photo.price, "create_at": db_photo.create_at, "update_at": db_photo.update_at, "file_path": db_photo.file_path},
+        "data": {"id_photo": db_photo.id_photo, "id_author": db_photo.id_author, "title": db_photo.title, "description": db_photo.description, "price": db_photo.price, "create_at": db_photo.create_at, "update_at": db_photo.update_at, "path": db_photo.path},
         "error": False
     }
     return response_data
@@ -117,7 +117,7 @@ async def delete_photo(photo_id: int, db: Session = Depends(get_db), current_use
 
 @photo_router.get("/getimage/{nama_file}", response_model=dict, dependencies=[Depends(JWTBearer())])
 async def get_image(nama_file: str):
-    file_path = f"./data_file/{nama_file}"
-    if not os.path.exists(file_path):
+    path = f"./data_file/{nama_file}"
+    if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="File not found")
-    return FileResponse(file_path)
+    return FileResponse(path)

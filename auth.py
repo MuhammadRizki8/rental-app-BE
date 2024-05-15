@@ -10,7 +10,6 @@ from dependencies import *
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
-# Fungsi untuk membuat wallet baru saat membuat user baru
 def create_initial_wallet(db: Session, user_id: int):
     initial_balance = Decimal('30.00')  # Saldo awal 30
     new_wallet = models.Wallet(balance=initial_balance, id_user=user_id)
