@@ -1,14 +1,50 @@
 # schemas.py
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Any
 from decimal import Decimal
+
+class ResponseBase(BaseModel):
+    message: str
+    data: Optional[Any] = None
+    error: bool
+    
+class UserResponseData(BaseModel):
+    id: int
+    username: str
+    id_wallet: Optional[int] = None
+
+class TokenResponseData(BaseModel):
+    access_token: str
+    refresh_token: str
+    id_user: int
+    id_wallet: int
+
+class UserListResponseData(BaseModel):
+    id: int
+    username: str
+    create_at: datetime
+    update_at: datetime
+    
+class PhotoDetailResponseData(BaseModel):
+    id_photo: int
+    id_author: int
+    title: str
+    description: str
+    price: float
+    create_at: datetime
+    update_at: datetime
+    path: Optional[str] = None 
+
+class PasswordChangeResponseData(BaseModel):
+    pass 
+# ----------------------------------------------------------
 
 class UserCreate(BaseModel):
     username: str
     password: str
 
-class requestdetails(BaseModel):
+class UserLogin(BaseModel):
     username: str
     password: str
 
@@ -41,14 +77,6 @@ class PhotoUpdate(BaseModel):
     description: str
     price: Optional[float] = None
 
-class Photo(PhotoBase):
-    id_photo: int
-    create_at: datetime
-    update_at: datetime
-    
-    class Config:
-        from_attributes = True
-
 class PhotoDetail(PhotoBase):
     id_photo: int
     id_author: int
@@ -69,14 +97,6 @@ class WalletCreate(WalletBase):
 
 class WalletUpdate(WalletBase):
     pass
-
-class Wallet(WalletBase):
-    id_wallet: int
-    create_at: Optional[str]
-    update_at: Optional[str]
-    
-    class Config:
-        from_attributes = True
 
 # ------------------------------------------------------
 class PurchaseCreate(BaseModel):

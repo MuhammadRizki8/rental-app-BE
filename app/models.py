@@ -1,14 +1,14 @@
 # models.py
 from sqlalchemy import Column, Integer, String, Text, DECIMAL, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from database import BaseDB
+from .database import BaseDB
 from datetime import datetime
 
 class User(BaseDB):
     __tablename__ = "user"
-    id = Column(Integer, primary_key=True)
-    username = Column(String, unique=True, index=True)
-    password = Column(String)
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    password = Column(String, nullable=False)
     create_at = Column(DateTime, default=datetime.now)
     update_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
@@ -43,7 +43,7 @@ class Photo(BaseDB):
 
 class Wallet(BaseDB):
     __tablename__ = "wallet"
-    id_wallet = Column(Integer, primary_key=True)
+    id_wallet = Column(Integer, primary_key=True, index=True)
     id_user = Column(Integer, ForeignKey("user.id"))
     balance = Column(DECIMAL(10, 2), nullable=False)
     create_at = Column(DateTime, nullable=False, default=datetime.now)
