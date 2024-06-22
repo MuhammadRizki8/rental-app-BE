@@ -1,52 +1,58 @@
-# schemas.py
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, Any
+from typing import Optional, Any, Union
 from decimal import Decimal
 
 class ResponseBase(BaseModel):
     message: str
     data: Optional[Any] = None
     error: bool
-    
-class UserResponseData(BaseModel):
-    id: int
-    username: str
-    id_wallet: Optional[int] = None
 
 class TokenResponseData(BaseModel):
     access_token: str
     refresh_token: str
     id_user: int
-    id_wallet: int
 
 class UserListResponseData(BaseModel):
     id: int
     username: str
     create_at: datetime
     update_at: datetime
-    
-class PhotoDetailResponseData(BaseModel):
-    id_photo: int
-    id_author: int
-    title: str
-    description: str
-    price: float
-    create_at: datetime
-    update_at: datetime
-    path: Optional[str] = None 
 
-class PasswordChangeResponseData(BaseModel):
-    pass 
-# ----------------------------------------------------------
+class UserResponseData(BaseModel):
+    id: int
+    username: str
 
 class UserCreate(BaseModel):
     username: str
     password: str
+    fullname: str
+    contact: str
 
 class UserLogin(BaseModel):
     username: str
     password: str
+    
+class UserUpdate(BaseModel):
+    fullname: Optional[str]
+    contact: Optional[str]
+    gender: Optional[str]
+    address: Optional[str]
+    photo_url: Optional[str]
+
+class UserResponseData(BaseModel):
+    id: int
+    username: str
+    fullname: str
+    contact: str
+    gender: Optional[str]
+    address: Optional[str]
+    photo_url: Optional[str]
+    create_at: datetime
+    update_at: datetime
+
+    class Config:
+        orm_mode = True
 
 class changepassword(BaseModel):
     username: str
@@ -54,77 +60,118 @@ class changepassword(BaseModel):
     new_password: str
 
 class TokenCreate(BaseModel):
-    user_id: str
+    user_id: int
     access_token: str
     refresh_token: str
     status: bool
     created_date: datetime
 
-# ----------------------------------------------------------   
+# ----------------------------------------
+class OrderStatusCreate(BaseModel):
+    status_name: str
 
-class PhotoBase(BaseModel):
-    title: str
-    description: str
-    price: float
+class OrderStatusUpdate(BaseModel):
+    status_name: Optional[str]
 
-class PhotoCreate(BaseModel):
-    title: str
-    description: str
-    price: Optional[float] = None
-
-class PhotoUpdate(BaseModel):
-    title: str
-    description: str
-    price: Optional[float] = None
-
-class PhotoDetail(PhotoBase):
-    id_photo: int
-    id_author: int
-    create_at: datetime
-    update_at: datetime
-    path: Optional[str] = None  
-    
+class OrderStatusResponseData(BaseModel):
+    status_id: int
+    status_name: str
     class Config:
-        from_attributes = True
+        orm_mode = True
 
-# -------------------------------------------------------
-class WalletBase(BaseModel):
-    id_user: int
-    balance: float
+# ---------------------------------------
+class ItemCreate(BaseModel):
+    item_name: str
+    description: Optional[str]
+    price_per_day: Decimal
 
-class WalletCreate(WalletBase):
-    pass
+class ItemUpdate(BaseModel):
+    vendor_id: Optional[int]
+    item_name: Optional[str]
+    description: Optional[str]
+    price_per_day: Optional[Decimal]
+    image_url: Optional[str]
 
-class WalletUpdate(WalletBase):
-    pass
-
-# ------------------------------------------------------
-class PurchaseCreate(BaseModel):
-    id_photo: int
-
-class Purchase(BaseModel):
-    id_purchase: int
-    id_user: int
-    id_photo: int
-    amount: Decimal
-    create_at: datetime
+class ItemResponseData(BaseModel):
+    item_id: int
+    vendor_id: Optional[int]
+    item_name: str
+    description: Optional[str]
+    price_per_day: Decimal
+    image_url: Optional[str]
+    created_at: datetime
 
     class Config:
-        from_attributes = True
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
-        
-class PurchaseDetail(BaseModel):
-    id_purchase: int
-    id_user: int
-    id_photo: int
-    amount: Decimal
-    create_at: datetime
-    photo: PhotoDetail
+        orm_mode = True
+# -----------------------------------------
+class OrderCreate(BaseModel):
+    user_id: Optional[int]
+    item_id: Optional[int]
+    status_id: Optional[int]
+    order_date: Optional[datetime]
+    return_date: Optional[datetime]
+    total_price: Optional[Decimal]
+
+class OrderUpdate(BaseModel):
+    user_id: Optional[int]
+    item_id: Optional[int]
+    status_id: Optional[int]
+    order_date: Optional[datetime]
+    return_date: Optional[datetime]
+    total_price: Optional[Decimal]
+
+class OrderResponseData(BaseModel):
+    order_id: int
+    user_id: Optional[int]
+    item_id: Optional[int]
+    status_id: Optional[int]
+    order_date: datetime
+    return_date: Optional[datetime]
+    total_price: Optional[Decimal]
 
     class Config:
-        from_attributes = True
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+        orm_mode = True
+# ---------------------------------------
+class VendorCreate(BaseModel):
+    vendor_name: str
+    email: str
+
+class VendorUpdate(BaseModel):
+    vendor_name: Optional[str]
+    email: Optional[str]
+
+class VendorResponseData(BaseModel):
+    vendor_id: int
+    vendor_name: str
+    email: str
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+# ----------------------------------------
+class RatingCreate(BaseModel):
+    order_id: Optional[int]
+    user_id: Optional[int]
+    item_id: Optional[int]
+    rating: Optional[int]
+    review: Optional[str]
+
+class RatingUpdate(BaseModel):
+    order_id: Optional[int]
+    user_id: Optional[int]
+    item_id: Optional[int]
+    rating: Optional[int]
+    review: Optional[str]
+
+class RatingResponseData(BaseModel):
+    rating_id: int
+    order_id: Optional[int]
+    user_id: Optional[int]
+    item_id: Optional[int]
+    rating: Optional[int]
+    review: Optional[str]
+    rating_date: datetime
+
+    class Config:
+        orm_mode = True
+

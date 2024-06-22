@@ -1,9 +1,8 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, BaseDB
-from .routers import auth, photo, purchase, wallet
-from .dependencies import get_current_user
-
+from .routers import auth, items, order_status, orders, vendors, ratings, users
+from fastapi.staticfiles import StaticFiles
 app = FastAPI()
 
 # Mengaktifkan CORS
@@ -18,10 +17,14 @@ app.add_middleware(
 BaseDB.metadata.create_all(bind=engine)
 
 app.include_router(auth.auth_router)
-app.include_router(photo.photo_router)
-app.include_router(wallet.wallet_router)
-app.include_router(purchase.purchase_router)
-
+app.include_router(order_status.order_status_router)
+app.include_router(items.items_router)
+app.include_router(orders.orders_router)
+app.include_router(vendors.vendors_router)
+app.include_router(ratings.ratings_router)
+app.include_router(users.users_router) 
+# Serve static files from the uploads directory
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
