@@ -1,6 +1,6 @@
 - set up database
-  > create mysql database 'gallery_app'
-  > import gallery_app.sql
+  > create mysql database 'rental_app'
+  > import rental.sql
   
 - create virtual environment
   > python -m venv ven
